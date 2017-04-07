@@ -3,7 +3,7 @@
 #setup argument parser
 import argparse
 
-parser = argparse.ArgumentParser(description='A script to plot several timing histograms on top of one another. Pass it arguments for files, runs, and, if needed process names (assumes HLTX by default). For more than one file the arguments should be comma separated lists ordered respectively. Makes an output file called validation_plot.pdf Usage: python validation_plot.py --inputfiles INPUTFILES --runs RUNNUMBERS --processes PROCESSNAMES --log')
+parser = argparse.ArgumentParser(description='A script to plot several timing histograms on top of one another. Pass it arguments for files, runs, and, if needed process names (assumes HLTX by default). For more than one file the arguments should be comma separated lists ordered respectively. Makes an output file called validation_plot.pdf Usage: python validation_plot.py --inputfiles INPUTFILES --runs RUNNUMBERS --processes PROCESSNAMES --outdir OUTDIR --log')
 
 
 parser.add_argument("--inputfiles", type=str, help='The list of input files, comma separated if files should be added together, semicolon separated if files should not be added together',required=True,nargs=1)
@@ -13,8 +13,8 @@ parser.add_argument("--names",type=str,help='comma separated names for each summ
 parser.add_argument("--log",dest='log',action='store_true',help='specify to set log scale on the plot')
 parser.add_argument("--ext",dest='ext',action='store_true',help='specify to set extended x-axis')
 parser.add_argument("--outfile",type=str,help='optional outfile name',nargs=1)
+parser.add_argument("--outdir",type=str,help='optional outdir name',nargs=1)
 args=parser.parse_args()
-
 
 #import root libraries
 from ROOT import gROOT, TCanvas, TH1F, TFile, TLegend, gStyle
@@ -85,9 +85,13 @@ leg.Draw("same")
 if args.log:
     c1.SetLogy()
 
+filename=''
+if args.outdir:
+    filename=args.outdir[0]+'/'
+
 if args.outfile:
-    filename=args.outfile[0]
+    filename+=args.outfile[0]
 else:
-    filename='HLT_Validation_Plot.pdf'
+    filename+='HLT_Validation_Plot.pdf'
 c1.Print(filename)
  

@@ -3,23 +3,25 @@
 #setup argument parser
 import argparse
 
-parser = argparse.ArgumentParser(description='A script to plot several timing histograms on top of one another. Pass it arguments for files, runs, and, if needed process names (assumes HLTX by default). For more than one file the arguments should be comma separated lists ordered respectively. Makes an output file called validation_plot.pdf Usage: python validation_plot.py --inputfiles INPUTFILES --runs RUNNUMBERS --processes PROCESSNAMES --log')
-
+parser = argparse.ArgumentParser(description='A script to plot several timing histograms on top of one another. Pass it arguments for files, runs, and, if needed process names (assumes HLTX by default). For more than one file the arguments should be comma separated lists ordered respectively. Makes an output file called validation_plot.png Usage: python validation_plot.py --inputfiles INPUTFILES --runs RUNNUMBERS --processes PROCESSNAMES --nthreads NTHREADS --outdir OUTDIR --log')
 
 parser.add_argument("--inputfiles", type=str, help='The list of input files, comma separated if more than one file',required=True,nargs=1)
 parser.add_argument("--runs",type=str,help='the corresponding run numbers, set to 1 by default',nargs=1)
+parser.add_argument("--nthreads",type=str,help='nThreads used when doing timing tests',required=True,nargs=1)
 parser.add_argument("--processes",type=str,help='the corresponding process names, set to HLTX by default',nargs=1)
 parser.add_argument("--log",dest='log',action='store_true',help='specify to set log scale on the plot')
-parser.add_argument("--ext",dest='ext',action='store_true',help='specify to set extended x-axis')
-parser.add_argument("--outfile",type=str,help='optional outfile name',nargs=1)
+parser.add_argument("--outdir",type=str,help='optional outdir name',nargs=1)
 args=parser.parse_args()
-
 
 #import root libraries
 from ROOT import gROOT, TCanvas, TH1F, TFile, TLegend, gStyle
 
 #remove stat box
 gStyle.SetOptStat(False)
+
+outdir=''
+if args.outdir:
+    outdir=args.outdir[0]+'/'
 
 #deal with parsing arguments correctly
 multi=False
@@ -53,6 +55,8 @@ else:
     else:
         processes=['HLTX']
 
+nthreads = args.nthreads[0].split(",")
+
 #clear memory 
 gROOT.Reset()
 #make canvas to save plots to
@@ -70,7 +74,7 @@ while i<len(files):
 j=0
 Thists=[]
 while j<len(Tfiles):
-    dirname="DQMData/Run %s/HLT/Run summary/TimerService/Running 1 processes/process %s/all_paths" % (runs[j],processes[j])
+    dirname="DQMData/Run %s/HLT/Run summary/TimerService/Running %s processes/process %s/all_paths" % (runs[j],nthreads[0],processes[j])
     print dirname
     hist=Tfiles[j].Get(dirname)
     print "type is ",type(hist)
@@ -117,10 +121,7 @@ while k< len(Thists):
         Thists[k].SetLineColor(k+1)
         #write name in full
         name += type+' '+pu+' '+menu+' '+release+" Mean: %3.2f ms" % Thists[k].GetMean()
-        if args.ext:
-            Thists[k].GetXaxis().SetRangeUser(0,2000)
-        else:
-            Thists[k].GetXaxis().SetRangeUser(0,400)
+        print "Mean: %3.2f ms" % Thists[k].GetMean()
         Thists[k].Draw()
         leg.AddEntry(Thists[k],name,"l")
     else:
@@ -130,19 +131,14 @@ while k< len(Thists):
         Thists[k].Draw("same")
         #write name in full
         name += type+' '+pu+' '+menu+' '+release+" Mean: %3.2f ms" % Thists[k].GetMean()
-        if args.ext:
-            Thists[k].GetXaxis().SetRangeUser(0,2000)
-        else:
-            Thists[k].GetXaxis().SetRangeUser(0,400)
-  
+        print "Mean: %3.2f ms" % Thists[k].GetMean()
         leg.AddEntry(Thists[k],name,"l")
     k+=1
 
 leg.Draw("same")
 
-if args.outfile:
-    filename=args.outfile[0]
-else:
-    filename='HLT_Validation_Plot.pdf'
-c1.Print(filename)
+filename = 'HLT_Validation_Plot'
+if args.log:
+    filename+='_log'
+c1.Print(outdir+filename+'.png')
  

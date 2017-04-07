@@ -1,0 +1,8 @@
+python plotPath_Exclusive.py --pathTest --log --paths HLT_Photon175_v8,HLT_IsoMu27_v7,HLT_Mu8_Ele8_CaloIdM_TrackIdM_Mass8_PFHT300_v10 --inputfiles ../results/V1/nTH4_test2/DQM_V0001_R000999999__HLT__FastTimerService__All.root --runs 999999 --processes TEST --nthreads 4 --outdir output/V1/nTH4_test2
+
+python plotPath_Timing.py --pathTest --log --paths HLT_Photon175_v8,HLT_IsoMu27_v7,HLT_Mu8_Ele8_CaloIdM_TrackIdM_Mass8_PFHT300_v10 --inputfiles ../results/V1/nTH4_test2/DQM_V0001_R000999999__HLT__FastTimerService__All.root --runs 999999 --processes TEST --nthreads 4 --outdir output/V1/nTH4_test2
+
+w/ or w/o --log: <<<<inconsistent results>>>>
+
+
+python Menu_plotter.py --log --inputfiles ../results/V1/nTH4_test2/DQM_V0001_R000999999__HLT__FastTimerService__All.root --runs 999999 --processes TEST --nthreads 4 --outdir output/V1/nTH4_test2
