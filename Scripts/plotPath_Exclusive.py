@@ -64,7 +64,7 @@ def plotPathComparison(f,run,process,paths):
         legentry = paths[color-1] + " Mean: %f" % h.GetMean()
         leg.AddEntry(h,legentry,"l")
 
-        textout = paths[color-1] + " %f \n" % h.GetMean()
+        textout = paths[color-1] + " %f %i \n" % (h.GetMean(),h.GetBinContent(h.GetNbinsX()+1))
         output.write(textout)
 
         color+=1
@@ -108,15 +108,15 @@ def plotInputComparison(files,runs,processes,path):
 
     while k< len(Thists):
         if k==0:
+            print "Overflow: %i" % Thists[k].GetBinContent(Thists[k].GetNbinsX()+1)
             Thists[k].Scale( 1.0 / Thists[k].Integral() )
             Thists[k].GetYaxis().SetRangeUser(0.000008,0.2)
-            print "lower bound of bin 100: %i" % Thists[k].GetBinCenter(100)
-            print "percentage of events running particle flow: %i " % Thists[k].Integral(100,500)
             Thists[k].SetLineWidth(2)
             Thists[k].SetLineColor(k+1)
             Thists[k].Draw()
 
         else:
+            print "Overflow: %i" % Thists[k].GetBinContent(Thists[k].GetNbinsX()+1)
             Thists[k].Scale( 1.0 / Thists[k].Integral() )
             Thists[k].SetLineWidth(2)
             Thists[k].SetLineColor(k+1)

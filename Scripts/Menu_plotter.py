@@ -113,10 +113,9 @@ while k< len(Thists):
     elif files[k].find("Run")>-1:
         type="Run"+(files[k].split("_Run")[1]).split("_")[0]
     if k==0:
+        print "Overflow: %i" % Thists[k].GetBinContent(Thists[k].GetNbinsX()+1)
         Thists[k].Scale( 1.0 / Thists[k].Integral() )
         Thists[k].GetYaxis().SetRangeUser(0.000008,0.2)
-        print "lower bound of bin 100: %i" % Thists[k].GetBinCenter(100)
-        print "percentage of events running particle flow: %i " % Thists[k].Integral(100,500)
         Thists[k].SetLineWidth(2)
         Thists[k].SetLineColor(k+1)
         #write name in full
@@ -125,6 +124,7 @@ while k< len(Thists):
         Thists[k].Draw()
         leg.AddEntry(Thists[k],name,"l")
     else:
+        print "Overflow: %i" % Thists[k].GetBinContent(Thists[k].GetNbinsX()+1)
         Thists[k].Scale( 1.0 / Thists[k].Integral() )
         Thists[k].SetLineWidth(2)
         Thists[k].SetLineColor(k+1)
